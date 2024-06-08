@@ -2,42 +2,51 @@
 % Please edit documentation in R/loggit.R
 \name{loggit}
 \alias{loggit}
-\title{Log entries to file}
+\title{Log messages and R objects}
 \usage{
 loggit(
   log_lvl,
   log_msg,
   ...,
-  echo = TRUE,
+  echo = get_echo(),
   custom_log_lvl = FALSE,
-  sanitizer = default_ndjson_sanitizer
+  logfile = get_logfile(),
+  ignore_log_level = FALSE
 )
 }
 \arguments{
-\item{log_lvl}{Log level coerceable to \code{character}. For details see parameter \code{custom_log_lvl}.}
+\item{log_lvl}{Log level. A atomic vector of length one (usually \code{character}). Will be coerced to \code{character}.}
 
-\item{log_msg}{Main log message. Will be coerced to class \code{character}.}
+\item{log_msg}{Log message. A atomic vector of length one (usually \code{character}). Will be coerced to \code{character}.}
 
-\item{...}{Named arguments, each a atomic vector of length one, you wish to log.
+\item{...}{Named arguments, each a atomic vector of length one, you wish to log. Will be coerced to \code{character}.
 The names of the arguments are treated as column names in the log.}
 
-\item{echo}{Should the log file entry be printed to the console as well?
-Defaults to \code{TRUE}.}
+\item{echo}{Should the log entry (json) be echoed to \code{stdout} as well?}
 
-\item{custom_log_lvl}{Allow log levels other than "DEBUG", "INFO", "WARN",
-and "ERROR"? Defaults to \code{FALSE}.}
+\item{custom_log_lvl}{Allow log levels other than "DEBUG", "INFO", "WARN", and "ERROR"?}
 
-\item{sanitizer}{\link[=sanitizers]{Sanitizer function} to run over elements in log data.
-Defaults to \code{\link[=default_ndjson_sanitizer]{default_ndjson_sanitizer()}}.}
+\item{logfile}{Path of log file to write to.}
+
+\item{ignore_log_level}{Ignore the log level set by \code{set_log_level()}?}
 }
 \value{
 Invisible \code{NULL}.
 }
 \description{
-Log entries to a \href{https://github.com/ndjson}{ndjson} log file, defined by \code{\link[=set_logfile]{set_logfile()}}.
+Log messages and R objects to a \href{https://github.com/ndjson}{ndjson} log file.
 }
 \examples{
-  loggit("INFO", "This is a message", but_maybe = "you want more fields?",
-  sure = "why not?", like = 2, or = 10, what = "ever")
+\dontrun{
+  loggit("DEBUG", "This is a message")
 
+  loggit("INFO", "This is a message", echo = FALSE)
+
+  loggit("CUSTOM", "This is a message of a custom log_lvl", custom_log_lvl = TRUE)
+
+  loggit(
+   "INFO", "This is a message", but_maybe = "you want more fields?",
+    sure = "why not?", like = 2, or = 10, what = "ever"
+  )
+}
 }

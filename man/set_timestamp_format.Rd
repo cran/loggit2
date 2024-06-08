@@ -7,14 +7,12 @@
 set_timestamp_format(ts_format = "\%Y-\%m-\%dT\%H:\%M:\%S\%z", confirm = TRUE)
 }
 \arguments{
-\item{ts_format}{ISO date format. Defaults to ISO-8601 (e.g.
-"2020-01-01T00:00:00+0000").}
+\item{ts_format}{ISO date format.}
 
-\item{confirm}{Print confirmation message of timestamp format? Defaults to
-\code{TRUE}.}
+\item{confirm}{Print confirmation message of timestamp format?}
 }
 \value{
-Invisible \code{NULL}.
+Invisible the previous timestamp format.
 }
 \description{
 Set timestamp format for use in output logs.
@@ -28,6 +26,8 @@ the host system's time configuration to provide this. This is to enforce
 consistency across software running on the host.
 }
 \examples{
-set_timestamp_format("\%Y-\%m-\%d \%H:\%M:\%S")
+\dontrun{
+  set_timestamp_format("\%Y-\%m-\%d \%H:\%M:\%S")
+}
 
 }

@@ -2,9 +2,9 @@
 % Please edit documentation in R/handlers.R
 \name{message}
 \alias{message}
-\title{Diagnostic Messages Log Handler}
+\title{Message Log Handler}
 \usage{
-message(..., domain = NULL, appendLF = TRUE, .loggit = TRUE, echo = TRUE)
+message(..., domain = NULL, appendLF = TRUE, .loggit = NA, echo = get_echo())
 }
 \arguments{
 \item{...}{zero or more objects which can be coerced to character
@@ -17,9 +17,10 @@ message(..., domain = NULL, appendLF = TRUE, .loggit = TRUE, echo = TRUE)
 \item{appendLF}{logical: should messages given as a character string
     have a newline appended?}
 
-\item{.loggit}{Should \code{loggit()} execute? Defaults to \code{TRUE}.}
+\item{.loggit}{Should the condition message be added to the log?
+If \code{NA} the log level set by \code{set_log_level()} is used to determine if the condition should be logged.}
 
-\item{echo}{Should \code{loggit()}'s log entry be echoed to the console, as well? Defaults to \code{TRUE}.}
+\item{echo}{Should the log entry (json) be echoed to \code{stdout} as well?}
 }
 \value{
 Invisible \code{NULL}.
@@ -29,13 +30,16 @@ This function is identical to base R's \code{\link[base:message]{message}},
 but it includes logging of the exception message via \code{loggit()}.
 }
 \examples{
-  if (2 < 1) message("Don't say such silly things!")
+\dontrun{
+  message("Don't say such silly things!")
 
+  message("Don't say such silly things!", appendLF = FALSE, echo = FALSE)
+}
 }
 \seealso{
 Other handlers: 
-\code{\link{stopifnot}()},
 \code{\link{stop}()},
+\code{\link{stopifnot}()},
 \code{\link{warning}()}
 }
 \concept{handlers}

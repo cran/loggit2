@@ -11,21 +11,22 @@ set_logfile(logfile = NULL, confirm = TRUE, create = TRUE)
 An attempt is made to convert the path into a canonical absolute form using \code{\link[=normalizePath]{normalizePath()}}.
 If \code{NULL} will set to \verb{<tmpdir>/loggit.log}.}
 
-\item{confirm}{Print confirmation of log file setting? Defaults to \code{TRUE}.}
+\item{confirm}{Print confirmation of log file setting?}
 
-\item{create}{Create the log file if it does not exist? Defaults to \code{TRUE}.}
+\item{create}{Create the log file if it does not exist?}
 }
 \value{
-Invisible \code{NULL}.
+Invisible the previous log file path.
 }
 \description{
-Set the log file that loggit will write to.
+Set the log file that loggit will write to by default.
 }
 \details{
 No logs outside of a temporary directory will be written until this is set explicitly, as per CRAN policy.
 Therefore, the default behavior is to create a file named \code{loggit.log} in your system's temporary directory.
 }
 \examples{
-set_logfile(file.path(tempdir(), "loggit.log"))
-
+\dontrun{
+  set_logfile("path/to/logfile.log")
+}
 }

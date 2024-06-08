@@ -70,3 +70,75 @@ test_that("rotate_logs preserves sanitization", {
   expect_snapshot_file(tmp_log)
 
 })
+
+test_that("read_logs on empty log", {
+  set_logfile(get_logfile(), confirm = FALSE, create = TRUE)
+  log_df <- read_logs()
+  expect_identical(
+    log_df,
+    data.frame(timestamp = character(), log_lvl = character(), log_msg = character(), stringsAsFactors = FALSE)
+  )
+})
+cleanup()
+
+test_that("convert_to_csv", {
+  tmp_dir <- tempdir()
+  convert_to_csv(file = file.path(tmp_dir, "test.csv"), logfile = "testdata/test.loggit")
+  convert_to_csv(file = file.path(tmp_dir, "test_reverse.csv"), logfile = "testdata/test.loggit", last_first = TRUE)
+  convert_to_csv(
+    file = file.path(tmp_dir, "test_with_lf.csv"), unsanitize = TRUE, logfile = "testdata/test.loggit"
+  )
+
+  expect_snapshot_file(file.path(tmp_dir, "test.csv"))
+  expect_snapshot_file(file.path(tmp_dir, "test_reverse.csv"))
+  expect_snapshot_file(file.path(tmp_dir, "test_with_lf.csv"))
+})
+
+library(testthat)
+
+# Test for get_lvl_name function
+test_that("get_lvl_name", {
+  expect_identical(get_lvl_name(0L), "NONE")
+  expect_identical(get_lvl_name(1L), "ERROR")
+  expect_identical(get_lvl_name(2L), "WARN")
+  expect_identical(get_lvl_name(3L), "INFO")
+  expect_identical(get_lvl_name(4L), "DEBUG")
+
+  expect_error(get_lvl_name(1.0), "is.integer(level) is not TRUE", fixed = TRUE)
+  expect_error(get_lvl_name(TRUE), "is.integer(level) is not TRUE", fixed = TRUE)
+
+  expect_error(get_lvl_name(-1L), "level >= 0L is not TRUE")
+  expect_error(get_lvl_name(5L), "level <= 4L is not TRUE")
+})
+
+test_that("get_lvl_int", {
+  expect_identical(get_lvl_int("NONE"), 0L)
+  expect_identical(get_lvl_int("ERROR"), 1L)
+  expect_identical(get_lvl_int("WARN"), 2L)
+  expect_identical(get_lvl_int("INFO"), 3L)
+  expect_identical(get_lvl_int("DEBUG"), 4L)
+
+  expect_error(get_lvl_int(TRUE), "is.character(level) is not TRUE", fixed = TRUE)
+  expect_error(get_lvl_int(1.0), "is.character(level) is not TRUE", fixed = TRUE)
+
+  expect_error(get_lvl_int("INVALID"), "level %in% .* is not TRUE")
+})
+
+test_that("convert_lvl_input", {
+  expect_identical(convert_lvl_input(level = 0L), 0L)
+  expect_identical(convert_lvl_input(level = 1L), 1L)
+  expect_identical(convert_lvl_input(level = 4L), 4L)
+
+  expect_identical(convert_lvl_input(level = 0.0), 0L)
+  expect_identical(convert_lvl_input(level = 1.0), 1L)
+  expect_identical(convert_lvl_input(level = 4.0), 4L)
+
+  expect_identical(convert_lvl_input(level = "NONE"), 0L)
+  expect_identical(convert_lvl_input(level = "ERROR"), 1L)
+  expect_identical(convert_lvl_input(level = "DEBUG"), 4L)
+
+  expect_error(convert_lvl_input(level = -1L))
+  expect_error(convert_lvl_input(level = 5.0))
+
+  expect_error(convert_lvl_input(level = "INVALID"))
+})

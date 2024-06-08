@@ -4,15 +4,17 @@
 \alias{read_ndjson}
 \title{Read ndJSON-formatted log file}
 \usage{
-read_ndjson(logfile, unsanitizer = default_ndjson_unsanitizer)
+read_ndjson(logfile, unsanitize = TRUE, last_first = FALSE)
 }
 \arguments{
-\item{logfile}{Log file to read from, and convert to a \code{data.frame}.}
+\item{logfile}{Path to log file to read from.}
 
-\item{unsanitizer}{Unsanitizer function passed in from \code{\link[=read_logs]{read_logs()}}.}
+\item{unsanitize}{Should escaped special characters be unescaped?}
+
+\item{last_first}{Should the last log entry be the first row of the data frame?}
 }
 \value{
-A \code{data.frame}
+A \code{data.frame}, with the columns as the fields in the log file.
 }
 \description{
 Read ndJSON-formatted log file
