@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -380,12 +380,12 @@ the <code>logfile</code> argument of the logging functions
 the base R condition handler always use the session-wide
 configuration.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>old_log <span class="ot">&lt;-</span> loggit2<span class="sc">::</span><span class="fu">set_logfile</span>(<span class="at">logfile =</span> <span class="st">&quot;logfile.log&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Log file set to C:/Users/Matthias/AppData/Local/Temp/RtmpiCXXQb/logfile.log</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Log file set to C:/Users/a501562/AppData/Local/Temp/RtmpSgSLTi/logfile.log</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">loggit</span>(</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">log_lvl =</span> <span class="st">&quot;DEBUG&quot;</span>,</span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">log_msg =</span> <span class="st">&quot;This message will be logged to `logfile.log`.&quot;</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>)</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `logfile.log`.&quot;}</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `logfile.log`.&quot;}</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">loggit</span>(</span>
@@ -393,17 +393,17 @@ configuration.</p>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  <span class="at">log_msg =</span> <span class="st">&quot;This message will be logged to `otherlogfile.log`.&quot;</span>,</span>
 <span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="at">logfile =</span> <span class="st">&quot;otherlogfile.log&quot;</span></span>
 <span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>)</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `otherlogfile.log`.&quot;}</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `otherlogfile.log`.&quot;}</span></span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a></span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">with_loggit</span>(<span class="at">logfile =</span> <span class="st">&quot;logfile2.log&quot;</span>, {</span>
 <span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  base<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged to `logfile2.log`.&quot;</span>)</span>
 <span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>})</span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `logfile2.log`.\n&quot;}</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged to `logfile2.log`.\n&quot;}</span></span>
 <span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; This message will be logged to `logfile2.log`.</span></span>
 <span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a></span>
 <span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">set_logfile</span>(old_log)</span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; Log file set to C:/Users/Matthias/AppData/Local/Temp/RtmpiCXXQb/loggit.log</span></span></code></pre></div>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; Log file set to C:/Users/a501562/AppData/Local/Temp/RtmpSgSLTi/loggit.log</span></span></code></pre></div>
 </div>
 <div id="log-level" class="section level3">
 <h3>Log level</h3>
@@ -418,7 +418,7 @@ allows setting a log level for the code block being executed.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>old_log_lvl <span class="ot">&lt;-</span> loggit2<span class="sc">::</span><span class="fu">set_log_level</span>(<span class="st">&quot;INFO&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; Log level set to 3 (INFO)</span></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged, since the log level is INFO.&quot;</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged, since the log level is INFO.\n&quot;}</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged, since the log level is INFO.\n&quot;}</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; This message will be logged, since the log level is INFO.</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">loggit</span>(</span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">log_lvl =</span> <span class="st">&quot;DEBUG&quot;</span>,</span>
@@ -428,7 +428,7 @@ allows setting a log level for the code block being executed.</p>
 <span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="at">log_lvl =</span> <span class="st">&quot;DEBUG&quot;</span>, <span class="st">&quot;This message will be logged because the log level is ignored.&quot;</span>,</span>
 <span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="at">ignore_log_level =</span> <span class="cn">TRUE</span></span>
 <span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>)</span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged because the log level is ignored.&quot;}</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;DEBUG&quot;, &quot;log_msg&quot;: &quot;This message will be logged because the log level is ignored.&quot;}</span></span>
 <span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">warning</span>(</span>
 <span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="st">&quot;This warning message will not be logged, since .loggit = FALSE.&quot;</span>,</span>
 <span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="at">.loggit =</span> <span class="cn">FALSE</span></span>
@@ -440,16 +440,16 @@ allows setting a log level for the code block being executed.</p>
 <span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">warning</span>(<span class="st">&quot;This warning will not be logged, since the log level is set to ERROR.&quot;</span>)</span>
 <span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; Warning: This warning will not be logged, since the log level is set to ERROR.</span></span>
 <span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged, since .loggit = TRUE.&quot;</span>, <span class="at">.loggit =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged, since .loggit = TRUE.\n&quot;}</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged, since .loggit = TRUE.\n&quot;}</span></span>
 <span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; This message will be logged, since .loggit = TRUE.</span></span>
 <span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">stop</span>(<span class="st">&quot;This error message will be logged because the log level is set to ERROR.&quot;</span>)</span>
-<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;ERROR&quot;, &quot;log_msg&quot;: &quot;This error message will be logged because the log level is set to ERROR.&quot;}</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;ERROR&quot;, &quot;log_msg&quot;: &quot;This error message will be logged because the log level is set to ERROR.&quot;}</span></span>
 <span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt; Error in eval(expr, envir, enclos): This error message will be logged because the log level is set to ERROR.</span></span>
 <span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a></span>
 <span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">with_loggit</span>(<span class="at">log_level =</span> <span class="st">&quot;DEBUG&quot;</span>, {</span>
 <span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a>  base<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged because the log level is set to DEBUG.&quot;</span>)</span>
 <span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a>})</span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged because the log level is set to DEBUG.\n&quot;}</span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged because the log level is set to DEBUG.\n&quot;}</span></span>
 <span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt; This message will be logged because the log level is set to DEBUG.</span></span>
 <span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a></span>
 <span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">set_log_level</span>(old_log_lvl)</span>
@@ -467,12 +467,12 @@ control via the <code>echo</code> argument.</p>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will not be logged, but it will be output to the console.&quot;</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; This message will not be logged, but it will be output to the console.</span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged and output to the console.&quot;</span>, <span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged and output to the console.\n&quot;}</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged and output to the console.\n&quot;}</span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; This message will be logged and output to the console.</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">set_echo</span>(<span class="cn">TRUE</span>, <span class="at">confirm =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged and output to the console.&quot;</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-06-08T12:40:46+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged and output to the console.\n&quot;}</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2024-07-25T18:16:38+0200&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged and output to the console.\n&quot;}</span></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; This message will be logged and output to the console.</span></span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged, but it will not be echoed.&quot;</span>, <span class="at">echo =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; This message will be logged, but it will not be echoed.</span></span>
@@ -492,14 +492,14 @@ variable <code>TIMESTAMP_LOGGIT2</code> or the function
 <code>set_timestamp_format()</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>old_ts <span class="ot">&lt;-</span> loggit2<span class="sc">::</span><span class="fu">set_timestamp_format</span>(<span class="st">&quot;%H:%M:%S&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; Timestamp format set to %H:%M:%S.</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Current time in this format: 12:40:46</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Current time in this format: 18:16:38</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">message</span>(<span class="st">&quot;This message will be logged with a timestamp in the format HH:MM:SS.&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;12:40:46&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged with a timestamp in the format HH:MM:SS.\n&quot;}</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;18:16:38&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This message will be logged with a timestamp in the format HH:MM:SS.\n&quot;}</span></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; This message will be logged with a timestamp in the format HH:MM:SS.</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>loggit2<span class="sc">::</span><span class="fu">set_timestamp_format</span>(old_ts)</span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; Timestamp format set to %Y-%m-%dT%H:%M:%S%z.</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Current time in this format: 2024-06-08T12:40:46+0200</span></span></code></pre></div>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Current time in this format: 2024-07-25T18:16:38+0200</span></span></code></pre></div>
 </div>
 </div>
 <div id="temporary-configuration" class="section level2">

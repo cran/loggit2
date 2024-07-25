@@ -31,22 +31,28 @@
 #' @export
 with_loggit <- function(exp, logfile = get_logfile(), echo = get_echo(), log_level = get_log_level()) {
   log_level <- convert_lvl_input(log_level)
+  log_error <- log_level >= 1L
+  log_warn <- log_level >= 2L
+  log_info <- log_level >= 3L
+
+  exists_on_start <- file.exists(logfile)
+  log_con <- file(description = logfile, open = "a")
+  on.exit({
+    close(con = log_con)
+    if (!exists_on_start && file.size(logfile) == 0L) file.remove(logfile) # nocov
+  }, add = TRUE, after = FALSE)
+
+
   withCallingHandlers(
     exp,
     error = function(e) {
-      if (log_level >= 1L) {
-        loggit(log_lvl = "ERROR", log_msg = e[["message"]], echo = echo, logfile = logfile, ignore_log_level = TRUE)
-      }
+      if (log_error) loggit_internal(log_lvl = "ERROR", log_msg = conditionMessage(e), echo = echo, logfile = log_con)
     },
     warning = function(w) {
-      if (log_level >= 2L) {
-        loggit(log_lvl = "WARN", log_msg = w[["message"]], echo = echo, logfile = logfile, ignore_log_level = TRUE)
-      }
+      if (log_warn) loggit_internal(log_lvl = "WARN", log_msg = conditionMessage(w), echo = echo, logfile = log_con)
     },
     message = function(m) {
-      if (log_level >= 3L) {
-        loggit(log_lvl = "INFO", log_msg = m[["message"]], echo = echo, logfile = logfile, ignore_log_level = TRUE)
-      }
+      if (log_info) loggit_internal(log_lvl = "INFO", log_msg = conditionMessage(m), echo = echo, logfile = log_con)
     }
   )
 }
