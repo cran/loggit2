@@ -75,7 +75,7 @@ find_call <- function() {
   if (length(parents) <= 2L) return(NULL) # nocov
   # Ignore any wrapper environments above the global R environment
   # For example necessary in JetBrains IDEs
-  id <- match(0L, parents)
+  id <- match(0L, parents, nomatch = 0L)
   if (id >= length(parents) - 1L) return(NULL) # nocov
   return(sys.call(-2L))
 }
@@ -154,4 +154,94 @@ convert_lvl_input <- function(level) {
     level <- get_lvl_int(level)
   }
   level
+}
+
+#' Convert Call to String
+#'
+#' Converts a call object to a string and optionally determines the full call stack.
+#'
+#' @param call Call object.
+#' @param full_stack Include the full call stack?
+#' @param default_cutoff Number of calls to cut from the end of the call stack if no matching call is found.
+#'
+#' @return Deparsed call as string.
+#'
+#' @details The full call stack can only be determined if the call is in the current context. The default cutoff is 4
+#' because the only known case is an primitive error in `with_loggit()` which adds 4 calls to the stack.
+#'
+#' @keywords internal
+call_2_string <- function(call, full_stack = FALSE, default_cutoff = 4L) {
+  if (is.null(call)) return(NA_character_)
+  call_str <- deparse1(call)
+  if (full_stack) {
+    # Truncate the call stack after the `call`
+    raw_call_stack <- sys.calls()
+    call_stack <- vapply(raw_call_stack, deparse1, FUN.VALUE = character(1L))
+    call_match <- match(call_str, rev(call_stack))
+    call_match_pos <- length(call_stack)
+    if (!is.na(call_match)) call_match_pos <- call_match_pos - call_match + 1L
+    # Shorten to 150 characters
+    call_stack <- vapply(call_stack, substr, FUN.VALUE = character(1L), start = 1L, stop = 150L)
+    call_stack <- gsub("\n", "", call_stack, fixed = TRUE)
+    call_stack <- gsub("\\s+", " ", call_stack)
+    call_stack <- paste0(call_stack, vapply(raw_call_stack, get_file_loc, FUN.VALUE = character(1L)))
+    # Ignore any wrapper environments above the global R environment
+    # For example necessary in JetBrains IDEs
+    parents <- sys.parents()[seq_len(call_match_pos)]
+    base_id <- match(0L, parents, nomatch = 0L)
+    parents <- parents[base_id:call_match_pos]
+    funcs <- lapply(parents, sys.function)
+    pkgs <- vapply(funcs, get_package_name, FUN.VALUE = character(1L))
+    pkgs[[1L]] <- ""
+    call_stack <- paste0(call_stack[base_id:call_match_pos], pkgs)
+    if (is.na(call_match)) {
+      # Cut the last `default_cutoff` calls from the stack
+      call_stack <- call_stack[seq_len(max(length(call_stack) - default_cutoff, 0L))]
+      # And add the call to the end
+      call_stack <- c(call_stack, paste("Original Call: ", call_str))
+    }
+    call_str <- paste(call_stack, collapse = "\n")
+  }
+  return(call_str)
+}
+
+#' Get file location
+#'
+#' Get the file location of a call object.
+#'
+#' @param x Call object.
+#'
+#' @return The file location as string.
+#'
+#' @keywords internal
+get_file_loc <- function(x) {
+  # This code is adapted from .traceback() in base R
+  srcloc <- if (!is.null(srcref <- attr(x, "srcref"))) {
+    srcfile <- attr(srcref, "srcfile")
+    paste0(" [at ", basename(srcfile[["filename"]]), "#", srcref[[1L]], "]")
+  } else {
+    ""
+  }
+}
+
+#' Get package name
+#'
+#' Get the package name of a function.
+#'
+#' @param x Function.
+#'
+#' @return The package location as string.
+#'
+#' @keywords internal
+get_package_name <- function(x) {
+  if (is.primitive(x)) {
+    return(" [in base]")
+  }
+
+  name <- environmentName(environment(x))
+  if (nchar(name) == 0L || name %in% c("R_EmptyEnv", "R_GlobalEnv")) {
+    return("")
+  } else {
+    return(paste0(" [in ", name, "]"))
+  }
 }

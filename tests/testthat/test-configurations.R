@@ -92,3 +92,177 @@ test_that("test log_lvl configuration", {
   expect_output(suppressWarnings(warning("test", .loggit = FALSE)), regexp = NA)
   expect_output(try(stop("test", .loggit = FALSE), silent = TRUE), regexp = NA)
 })
+
+test_that("test call option configuration", {
+  old <- get_call_options()
+  on.exit(set_call_options(.arg_list = old, confirm = FALSE))
+
+  # error when both ... and .arg_list provided
+  expect_error(
+    set_call_options(a = TRUE, .arg_list = list(a = TRUE)),
+    "Only one of `...` or `.arg_list` can be provided"
+  )
+
+  # error when .arg_list is not a list
+  expect_error(
+    set_call_options(.arg_list = "notalist"),
+    ".arg_list must be a list"
+  )
+
+  # error when .arg_list is not named
+  bad_list <- list(TRUE, named = 1L)
+  expect_error(
+    set_call_options(.arg_list = bad_list),
+    "All arguments must be named"
+  )
+
+  # warnig when .arg_list has unexpected arguments
+  expect_warning(
+    set_call_options(.arg_list = list(log_call = TRUE, full_stack = TRUE, unexpected = TRUE), confirm = FALSE),
+    "Unexpected arguments provided: unexpected"
+  )
+
+  # no args: returns old, sets defaults, and prints message
+  set <- set_call_options(confirm = FALSE, log_call = TRUE, full_stack = FALSE) # Init for test
+  expect_message(
+    old <- set_call_options(),
+    "Call options set to log_call = FALSE, full_stack = FALSE."
+  )
+  expect_identical(old, list(log_call = TRUE, full_stack = FALSE))
+
+  # sets options via ... and returns old
+  set_call_options(log_call = TRUE, full_stack = TRUE, confirm = FALSE) # Init for test
+  expect_message(
+    old <- set_call_options(log_call = FALSE, full_stack = TRUE),
+    "Call options set to log_call = FALSE, full_stack = TRUE."
+  )
+  expect_identical(old, list(log_call = TRUE, full_stack = TRUE))
+
+  # set options via .arg_list and returns old
+  set_call_options(log_call = TRUE, full_stack = FALSE, confirm = FALSE) # Init for test
+  expect_message(
+    old <- set_call_options(.arg_list = list(log_call = TRUE, full_stack = TRUE)),
+    "Call options set to log_call = TRUE, full_stack = TRUE."
+  )
+  expect_identical(old, list(log_call = TRUE, full_stack = FALSE))
+
+  # call confirm = FALSE, no message, returns old
+  set_call_options(log_call = FALSE, full_stack = TRUE, confirm = FALSE) # Init for test
+  expect_silent(old <- set_call_options(.arg_list = list(log_call = FALSE, full_stack = FALSE), confirm = FALSE))
+  expect_identical(old, list(log_call = FALSE, full_stack = TRUE))
+})
+cleanup()
+
+test_that("test call option configuration (effect on call handlers)", {
+  old <- set_call_options(log_call = TRUE, full_stack = FALSE, confirm = FALSE)
+  on.exit(set_call_options(.arg_list = old, confirm = FALSE))
+  # Test loggit (via function call to garantee a call object)
+  f <- function() loggit(log_lvl = "DEBUG", log_msg = "Test message with call", echo = FALSE)
+  g <- function() f()
+  g()
+  log_tmp <- read_logs()
+  expect_true(is.na(log_tmp[["log_call"]]))
+  cleanup()
+  # Test debuginfo
+  f <- function() debuginfo("Test message with call", echo = FALSE)
+  g <- function() f()
+  g()
+  log_tmp <- read_logs()
+  expect_identical(log_tmp[["log_call"]], "f()")
+  cleanup()
+  # Test message
+  f <- function() message("Test message with call", echo = FALSE)
+  g <- function() f()
+  suppressMessages(g())
+  log_tmp <- read_logs()
+  # Message uses an alternative call approach
+  expect_identical(log_tmp[["log_call"]], "message(\"Test message with call\", echo = FALSE)")
+  cleanup()
+  # Test warning
+  f <- function() warning("Test message with call", echo = FALSE)
+  g <- function() f()
+  suppressWarnings(g())
+  log_tmp <- read_logs()
+  expect_identical(log_tmp[["log_call"]], "f()")
+  cleanup()
+  # Test error
+  f <- function() stop("Test message with call", echo = FALSE)
+  g <- function() f()
+  try(g(), silent = TRUE)
+  log_tmp <- read_logs()
+  expect_identical(log_tmp[["log_call"]], "f()")
+  cleanup()
+  # Test stopifnot
+  f <- function() stopifnot(FALSE, "Test message with call", echo = FALSE)
+  g <- function() f()
+  try(g(), silent = TRUE)
+  log_tmp <- read_logs()
+  expect_identical(log_tmp[["log_call"]], "f()")
+})
+cleanup()
+
+test_that("test call option configuration (effect on call handlers) II", {
+  old <- set_call_options(log_call = FALSE, confirm = FALSE)
+  on.exit(set_call_options(.arg_list = old, confirm = FALSE))
+  # Test loggit (via function call to garantee a call object)
+  loggit(log_lvl = "DEBUG", log_msg = "Test message with call", echo = FALSE)
+  debuginfo("Test message with call", echo = FALSE)
+  suppressMessages(message("Test message with call", echo = FALSE))
+  suppressWarnings(warning("Test message with call", echo = FALSE))
+  try(stop("Test message with call", echo = FALSE), silent = TRUE)
+  try(stopifnot(FALSE, "Test message with call", echo = FALSE), silent = TRUE)
+  log_tmp <- read_logs()
+  expect_false("log_call" %in% names(log_tmp))
+})
+cleanup()
+
+
+test_that("test call option configuration (effect on call handlers) III", {
+  old <- set_call_options(log_call = TRUE, full_stack = TRUE, confirm = FALSE)
+  on.exit(set_call_options(.arg_list = old, confirm = FALSE))
+  # Test loggit (via function call to garantee a call object)
+  f <- function() loggit(log_lvl = "DEBUG", log_msg = "Test message with call", echo = FALSE)
+  g <- function() f()
+  g()
+  log_tmp <- read_logs()
+  expect_true(is.na(log_tmp[["log_call"]]))
+  cleanup()
+  # Test debuginfo
+  f <- function() debuginfo("Test message with call", echo = FALSE)
+  g <- function() f()
+  g()
+  log_tmp <- read_logs()
+  expect_true(grepl(log_tmp[["log_call"]], pattern = "\ng().*\nf()"))
+  cleanup()
+  # Test message
+  f <- function() message("Test message with call", echo = FALSE)
+  g <- function() f()
+  suppressMessages(g())
+  log_tmp <- read_logs()
+  # Message uses an alternative call approach
+  expect_true(grepl(
+    log_tmp[["log_call"]], pattern = "\ng\\(\\).*\nmessage\\(\"Test message with call\", echo = FALSE\\)"
+  ))
+  cleanup()
+  # Test warning
+  f <- function() warning("Test message with call", echo = FALSE)
+  g <- function() f()
+  suppressWarnings(g())
+  log_tmp <- read_logs()
+  expect_true(grepl(log_tmp[["log_call"]], pattern = "\ng().*\nf()"))
+  cleanup()
+  # Test error
+  f <- function() stop("Test message with call", echo = FALSE)
+  g <- function() f()
+  try(g(), silent = TRUE)
+  log_tmp <- read_logs()
+  expect_true(grepl(log_tmp[["log_call"]], pattern = "\ng().*\nf()"))
+  cleanup()
+  # Test stopifnot
+  f <- function() stopifnot(FALSE, "Test message with call", echo = FALSE)
+  g <- function() f()
+  try(g(), silent = TRUE)
+  log_tmp <- read_logs()
+  expect_true(grepl(log_tmp[["log_call"]], pattern = "\ng().*\nf()"))
+})
+cleanup()
